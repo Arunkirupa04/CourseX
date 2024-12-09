@@ -1,11 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { ActivityIndicator } from "react-native";
 import { useFonts } from "expo-font";
-import { ThemeProvider } from "./theme/ThemeProvider"; // Custom provider for themes
-import HomeScreen from "./screens/HomeScreen";
-import LoginScreen from "./screens/LoginScreen";
-import SignUpScreen from "./screens/SignupScreen";
-import BottomNavBar from "./components/bottomNavbar";
+import { ThemeProvider } from "./theme/ThemeProvider";
+import AppNavigator from "./navigation/AppNavigator";
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -21,10 +18,7 @@ export default function App() {
 
   return (
     <ThemeProvider>
-      {/* <BottomNavBar /> */}
-      {/* <HomeScreen /> */}
-      <LoginScreen />
-      {/* <SignUpScreen /> */}
+      <AppNavigator />
     </ThemeProvider>
   );
 }
