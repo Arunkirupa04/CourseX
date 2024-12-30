@@ -1,24 +1,17 @@
 import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
-import { useTheme } from "../theme/ThemeProvider"; // Assuming you are using a ThemeProvider
+import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { useTheme } from "../theme/ThemeProvider";
 import { typography } from "../theme/typography";
+import { useClickContext } from "../context/ClickContext";
 
-const InstitutionCard = ({
-  name,
-  rating,
-  reviews,
-  field,
-  description,
-  image,
-}) => {
-  const { theme } = useTheme(); // Access the dynamic theme
+const InstitutionCard = ({ name, institute, rating, description, image }) => {
+  const { theme } = useTheme();
+  const { incrementCount } = useClickContext();
 
   return (
-    <View
-      style={[
-        styles.card,
-        { backgroundColor: theme.colors.oncard }, // Apply dynamic theme color
-      ]}
+    <TouchableOpacity
+      style={[styles.card, { backgroundColor: theme.colors.oncard }]}
+      onPress={incrementCount}
     >
       <Image source={{ uri: image }} style={styles.image} />
       <View style={styles.textContainer}>
@@ -26,40 +19,40 @@ const InstitutionCard = ({
           style={[
             styles.name,
             typography.subtitle,
-            { color: theme.colors.textPrimary }, // Dynamic text color
+            { color: theme.colors.textPrimary },
           ]}
         >
           {name}
-        </Text>{" "}
+        </Text>
         <Text
           style={[
             styles.rating,
             typography.smallText,
-            { color: theme.colors.textSecondary }, // Dynamic text color
+            { color: theme.colors.textSecondary },
           ]}
         >
-          ⭐ {rating} ({reviews} reviews)
+          ⭐ {rating}
         </Text>
         <Text
           style={[
             styles.field,
             typography.body,
-            { color: theme.colors.textSecondary }, // Dynamic text color
+            { color: theme.colors.textSecondary },
           ]}
         >
-          {field}
+          {institute}
         </Text>
         <Text
           style={[
             styles.description,
             typography.smallText,
-            { color: theme.colors.textSecondary }, // Dynamic text color
+            { color: theme.colors.textSecondary },
           ]}
         >
           {description}
         </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -72,7 +65,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: 100,
-    // height: 120,
+    height: 140,
     borderRadius: 8,
   },
   textContainer: {
@@ -81,18 +74,14 @@ const styles = StyleSheet.create({
   },
   name: {
     fontWeight: "semibold",
-    fontSize: 12,
-  },
-  field: {
-    marginTop: 4,
-    fontSize: 12,
+    fontSize: 16,
   },
   description: {
-    fontSize: 10,
+    fontSize: 14,
     marginTop: 4,
   },
   rating: {
-    fontSize: 10,
+    fontSize: 12,
     marginTop: 5,
   },
 });

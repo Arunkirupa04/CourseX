@@ -10,11 +10,39 @@ import {
 import { useTheme } from "../theme/ThemeProvider";
 import { typography } from "../theme/typography";
 
-const SignUpScreen = () => {
+const SignUpScreen = ({ navigation }) => {
   const { theme } = useTheme();
-  const [name, setName] = useState("");
+  const [userName, setuserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({}); // For validation errors
+
+  // Validation functions
+  const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const isValidPassword = (password) => password.length >= 6;
+
+  const handleSignUp = () => {
+    let newErrors = {};
+
+    if (!userName) newErrors.userName = "userName is required.";
+    if (!email) {
+      newErrors.email = "Email is required.";
+    } else if (!isValidEmail(email)) {
+      newErrors.email = "Enter a valid email address.";
+    }
+    if (!password) {
+      newErrors.password = "Password is required.";
+    } else if (!isValidPassword(password)) {
+      newErrors.password = "Password must be at least 6 characters.";
+    }
+
+    setErrors(newErrors);
+
+    // If no errors, navigate to Login screen
+    if (Object.keys(newErrors).length === 0) {
+      navigation.navigate("Login");
+    }
+  };
 
   return (
     <View
@@ -32,54 +60,33 @@ const SignUpScreen = () => {
       >
         Create an Account
       </Text>
-      {/* Input Fields */}
-      <Text
-        style={[
-          styles.subtitle,
-          typography.body,
-          {
-            color: theme.colors.title,
-            alignSelf: "flex-start",
-            marginLeft: "5%",
-          },
-        ]}
-      >
-        Name
+
+      {/* userName Field */}
+      <Text style={[styles.subtitle, { color: theme.colors.title }]}>
+        userName
       </Text>
       <TextInput
         style={[
           styles.input,
-          typography.input,
-          {
-            backgroundColor: theme.colors.inputBackground,
-          },
+          { backgroundColor: theme.colors.inputBackground },
         ]}
-        placeholder="Enter your Name"
+        placeholder="Enter your userName"
         placeholderTextColor={theme.colors.placeholder}
-        value={name}
-        onChangeText={(text) => setName(text)}
+        value={userName}
+        onChangeText={(text) => setuserName(text)}
       />
+      {errors.userName && (
+        <Text style={styles.errorText}>{errors.userName}</Text>
+      )}
 
-      <Text
-        style={[
-          styles.subtitle,
-          typography.body,
-          {
-            color: theme.colors.title,
-            alignSelf: "flex-start",
-            marginLeft: "5%",
-          },
-        ]}
-      >
+      {/* Email Field */}
+      <Text style={[styles.subtitle, { color: theme.colors.title }]}>
         Email
       </Text>
       <TextInput
         style={[
           styles.input,
-          typography.input,
-          {
-            backgroundColor: theme.colors.inputBackground,
-          },
+          { backgroundColor: theme.colors.inputBackground },
         ]}
         placeholder="Enter your Email"
         placeholderTextColor={theme.colors.placeholder}
@@ -87,28 +94,16 @@ const SignUpScreen = () => {
         onChangeText={(text) => setEmail(text)}
         keyboardType="email-address"
       />
+      {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
 
-      <Text
-        style={[
-          styles.subtitle,
-          typography.body,
-          {
-            color: theme.colors.title,
-            alignSelf: "flex-start",
-            marginLeft: "5%",
-          },
-        ]}
-      >
+      {/* Password Field */}
+      <Text style={[styles.subtitle, { color: theme.colors.title }]}>
         Password
       </Text>
       <TextInput
         style={[
           styles.input,
-          typography.input,
-          {
-            backgroundColor: theme.colors.inputBackground,
-            color: theme.colors.text,
-          },
+          { backgroundColor: theme.colors.inputBackground },
         ]}
         placeholder="Create a Password"
         placeholderTextColor={theme.colors.placeholder}
@@ -116,38 +111,26 @@ const SignUpScreen = () => {
         onChangeText={(text) => setPassword(text)}
         secureTextEntry
       />
+      {errors.password && (
+        <Text style={styles.errorText}>{errors.password}</Text>
+      )}
 
       {/* Sign Up Button */}
       <TouchableOpacity
         style={[styles.button, { backgroundColor: theme.colors.primary }]}
-        onPress={() => console.log("Sign Up Button Pressed")}
+        onPress={handleSignUp}
       >
-        <Text
-          style={[
-            styles.buttonText,
-            typography.smallText,
-            { color: theme.colors.buttonText },
-          ]}
-        >
+        <Text style={[styles.buttonText, { color: theme.colors.buttonText }]}>
           Sign Up
         </Text>
       </TouchableOpacity>
+
       {/* Link to Login */}
-      <Text
-        style={[
-          styles.footerText,
-          typography.smallText,
-          { color: theme.colors.subtitle },
-        ]}
-      >
+      <Text style={[styles.footerText, { color: theme.colors.subtitle }]}>
         Already have an account?{" "}
         <Text
-          style={[
-            styles.linkText,
-            typography.smallText,
-            { color: theme.colors.primary },
-          ]}
-          onPress={() => console.log("Go to Login Pressed")}
+          style={[styles.linkText, { color: theme.colors.primary }]}
+          onPress={() => navigation.navigate("Login")}
         >
           Log In
         </Text>
@@ -174,14 +157,25 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     textAlign: "left",
-    marginBottom: 10,
+    alignSelf: "flex-start",
+    marginLeft: "5%",
+    marginBottom: 5,
   },
   input: {
     width: "90%",
     paddingVertical: 12,
     paddingHorizontal: 15,
     borderRadius: 8,
-    marginBottom: 15,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: "#ccc",
+  },
+  errorText: {
+    color: "red",
+    alignSelf: "flex-start",
+    marginLeft: "5%",
+    marginBottom: 10,
+    fontSize: 12,
   },
   button: {
     width: "90%",
@@ -193,9 +187,12 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     textAlign: "center",
+    fontSize: 16,
+    fontWeight: "bold",
   },
   footerText: {
     textAlign: "center",
+    fontSize: 14,
   },
   linkText: {
     fontWeight: "bold",

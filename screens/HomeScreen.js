@@ -1,70 +1,91 @@
-import React from "react";
-import { View, Text, TextInput, StyleSheet, ScrollView } from "react-native";
-import TeacherCard from "../components/TeacherCard";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 import InstitutionCard from "../components/InstitutionCard";
-import teachers from "../data/teachers.json";
-import institutions from "../data/institutions.json";
-import { useTheme } from "../theme/ThemeProvider"; // Assuming theme provider is used for dynamic colors
+import { useTheme } from "../theme/ThemeProvider";
 import { typography } from "../theme/typography";
 import SearchInput from "../components/SearchInput";
+import { useClickContext } from "../context/ClickContext";
+import { useUser } from "../context/UserContext";
 
-const HomeScreen = () => {
-  const { theme } = useTheme(); // Accessing the theme for dynamic styling
+const HomeScreen = ({ route }) => {
+  const { username } = useUser();
+  const { theme } = useTheme();
+  const { clickCount } = useClickContext();
+  const [courses, setCourses] = useState([]);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/courses/");
+        const data = await response.json();
+        setCourses(data);
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      }
+    };
+
+    fetchCourses();
+  }, []);
 
   return (
-    <ScrollView
+    <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
-      <Text
-        style={[
-          styles.title,
-          typography.title,
-          { color: theme.colors.textPrimary },
-        ]}
-      >
-        Good evening!
-      </Text>
-      <Text
-        style={[
-          styles.title,
-          typography.subtitle,
-          { color: theme.colors.textSecondary },
-        ]}
-      >
-        Hardline Scott
-      </Text>
-      <SearchInput />
-      <Text
-        style={[
-          styles.sectionTitle,
-          typography.subtitle,
-          { color: theme.colors.textPrimary },
-        ]}
-      >
-        Popular Teachers
-      </Text>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.horizontalScroll}
-      >
-        {teachers.map((teacher) => (
-          <TeacherCard key={teacher.id} {...teacher} />
+      <ScrollView>
+        <Text
+          style={[
+            styles.title,
+            typography.title,
+            { color: theme.colors.textPrimary },
+          ]}
+        >
+          Welcome Back
+        </Text>
+        <Text
+          style={[
+            styles.subtitle,
+            typography.subtitle,
+            { color: theme.colors.textSecondary },
+          ]}
+        >
+          {username} !
+        </Text>
+        <SearchInput />
+        <Text
+          style={[
+            styles.sectionTitle,
+            typography.subtitle,
+            { color: theme.colors.textPrimary },
+          ]}
+        >
+          Available Courses
+        </Text>
+        {courses.map((course) => (
+          <InstitutionCard
+            key={course._id}
+            name={course.name}
+            institute={course.institute}
+            rating={course.rating}
+            description={course.shortDescription}
+            image={course.imageUrl}
+          />
         ))}
       </ScrollView>
-      <Text
+      <TouchableOpacity
         style={[
-          styles.sectionTitle,
-          typography.subtitle,
-          { color: theme.colors.textPrimary },
+          styles.floatingButton,
+          { backgroundColor: theme.colors.primary },
         ]}
       >
-        Popular Institutions
-      </Text>
-      {institutions.map((institution) => (
-        <InstitutionCard key={institution.id} {...institution} />
-      ))}
-    </ScrollView>
+        <Text style={{ color: "white", fontWeight: "bold" }}>{clickCount}</Text>
+      </TouchableOpacity>
+    </View>
   );
 };
 
@@ -78,19 +99,25 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 5,
   },
-  searchInput: {
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 20,
-    borderWidth: 1,
+  subtitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 12,
   },
   sectionTitle: {
-    // fontSize: 16,
     fontWeight: "bold",
     marginVertical: 10,
   },
-  horizontalScroll: {
-    marginBottom: 10,
+  floatingButton: {
+    position: "absolute",
+    bottom: 70,
+    right: 20,
+    width: 40,
+    height: 40,
+    borderRadius: 30,
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 5,
   },
 });
 

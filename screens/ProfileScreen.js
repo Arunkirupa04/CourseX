@@ -129,7 +129,7 @@ const ProfileScreen = () => {
       {/* Logout Button */}
       <TouchableOpacity
         style={[styles.button, { backgroundColor: theme.colors.primary }]}
-        onPress={() => console.log("Logout")}
+        onPress={() => navigation.navigate("Login")}
       >
         <Text style={[styles.buttonText, { color: theme.colors.buttonText }]}>
           Logout

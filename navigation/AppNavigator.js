@@ -86,27 +86,25 @@ const BottomNavBar = ({ navigation }) => {
 
 const AppNavigator = () => {
   return (
-    <NavigationContainer>
-      <Tab.Navigator
-        tabBar={(props) => <BottomNavBar {...props} />} // Pass props to BottomNavBar
-      >
-        <Tab.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{ headerShown: false }} // Hide header for HomeScreen
-        />
-        <Tab.Screen
-          name="Explore"
-          component={ExploreScreen}
-          options={{ headerShown: false }} // Hide header for ExploreScreen
-        />
-        <Tab.Screen
-          name="Profile"
-          component={ProfileScreen}
-          options={{ headerShown: false }} // Hide header for ProfileScreen
-        />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <Tab.Navigator
+      tabBar={(props) => <BottomNavBar {...props} />} // Pass props to BottomNavBar
+    >
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{ headerShown: false }} // Hide header for HomeScreen
+      />
+      <Tab.Screen
+        name="Explore"
+        component={ExploreScreen}
+        options={{ headerShown: false }} // Hide header for ExploreScreen
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{ headerShown: false }} // Hide header for ProfileScreen
+      />
+    </Tab.Navigator>
   );
 };
 

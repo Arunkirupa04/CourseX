@@ -9,90 +9,77 @@ import {
 } from "react-native";
 import { useTheme } from "../theme/ThemeProvider";
 import { typography } from "../theme/typography";
+import { useUser } from "../context/UserContext";
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }) => {
   const { theme } = useTheme();
-  const [email, setEmail] = useState("");
+  const { setUsername } = useUser(); // Correct usage
+  const [username, setUsernameLocal] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleLogin = () => {
+    setErrorMessage("");
+
+    if (!username || !password) {
+      setErrorMessage("Please fill out all fields.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setErrorMessage("Password should be at least 6 characters long.");
+      return;
+    }
+
+    // Update global username context
+    setUsername(username);
+    navigation.navigate("Main", { username });
+  };
 
   return (
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
-      {/* Image */}
       <Image
-        source={require("../assets/images/signup.svg")}
+        source={require("../assets/images/signup.png")}
         style={styles.image}
         resizeMode="contain"
       />
-      {/* Title */}
       <Text
         style={[styles.title, typography.title, { color: theme.colors.title }]}
       >
         Welcome Back
       </Text>
-      {/* Input Fields */}
-      <Text
-        style={[
-          styles.subtitle,
-          typography.body,
-          {
-            color: theme.colors.title,
-            alignSelf: "flex-start",
-            marginLeft: "5%",
-          },
-        ]}
-      >
-        Email
-      </Text>
       <TextInput
         style={[
           styles.input,
-          typography.input,
-          {
-            backgroundColor: theme.colors.inputBackground,
-          },
+          { backgroundColor: theme.colors.inputBackground },
         ]}
-        placeholder="Enter your Email"
-        placeholderTextColor={theme.colors.placeholder}
-        value={email}
-        onChangeText={(text) => setEmail(text)}
-        keyboardType="email-address"
+        placeholder="Enter your Username"
+        placeholderTextColor={theme.colors.placeholderText}
+        autoCapitalize="none"
+        value={username}
+        onChangeText={(text) => setUsernameLocal(text)}
       />
-
-      <Text
-        style={[
-          styles.subtitle,
-          typography.body,
-          {
-            color: theme.colors.title,
-            alignSelf: "flex-start",
-            marginLeft: "5%",
-          },
-        ]}
-      >
-        Password
-      </Text>
       <TextInput
         style={[
           styles.input,
-          typography.input,
-          {
-            backgroundColor: theme.colors.inputBackground,
-            color: theme.colors.text,
-          },
+          { backgroundColor: theme.colors.inputBackground },
         ]}
         placeholder="Password"
-        placeholderTextColor={theme.colors.placeholder}
+        placeholderTextColor={theme.colors.placeholderText}
+        secureTextEntry
         value={password}
         onChangeText={(text) => setPassword(text)}
-        secureTextEntry
       />
-
-      {/* Sign In Button */}
+      {errorMessage && (
+        <Text style={[styles.errorText, { color: theme.colors.error }]}>
+          {errorMessage}
+        </Text>
+      )}
       <TouchableOpacity
         style={[styles.button, { backgroundColor: theme.colors.primary }]}
-        onPress={() => console.log("Sign In Button Pressed")}
+        onPress={handleLogin}
       >
         <Text
           style={[
@@ -101,25 +88,14 @@ const LoginScreen = () => {
             { color: theme.colors.buttonText },
           ]}
         >
-          Sign In
+          Login
         </Text>
       </TouchableOpacity>
-      {/* Sign Up Link */}
-      <Text
-        style={[
-          styles.footerText,
-          typography.smallText,
-          { color: theme.colors.subtitle },
-        ]}
-      >
-        Don't you have an account?{" "}
+      <Text style={styles.footerText}>
+        Don't have an account?{" "}
         <Text
-          style={[
-            styles.linkText,
-            typography.smallText,
-            { color: theme.colors.primary },
-          ]}
-          onPress={() => console.log("Sign Up Link Pressed")}
+          style={styles.linkText}
+          onPress={() => navigation.navigate("Signup")}
         >
           Sign Up
         </Text>
@@ -143,17 +119,23 @@ const styles = StyleSheet.create({
   title: {
     textAlign: "center",
     marginBottom: 20,
-  },
-  subtitle: {
-    textAlign: "left",
-    marginBottom: 10,
+    fontSize: 24,
+    fontWeight: "bold",
   },
   input: {
     width: "90%",
     paddingVertical: 12,
     paddingHorizontal: 15,
     borderRadius: 8,
-    marginBottom: 15,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    fontSize: 16,
+  },
+  errorText: {
+    marginBottom: 10,
+    fontSize: 14,
+    textAlign: "center",
   },
   button: {
     width: "90%",
@@ -165,12 +147,16 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     textAlign: "center",
+    fontSize: 16,
+    fontWeight: "bold",
   },
   footerText: {
     textAlign: "center",
+    fontSize: 14,
   },
   linkText: {
     fontWeight: "bold",
+    color: "#007BFF",
   },
 });
 

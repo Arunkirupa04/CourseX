@@ -19,7 +19,7 @@ const SearchInput = () => {
             color: theme.colors.textPrimary,
           },
         ]}
-        placeholder="Search your teacher"
+        placeholder="Search your Courses"
         placeholderTextColor={theme.colors.textSecondary}
       />
       <Ionicons
