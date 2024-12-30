@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,47 +6,85 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-import { useTheme } from "../theme/ThemeProvider"; // Assuming you are using a theme provider for dynamic colors
-import BottomNavBar from "../components/bottomNavbar";
+import InstitutionCard from "../components/InstitutionCard";
+import { useTheme } from "../theme/ThemeProvider";
 import { typography } from "../theme/typography";
+import SearchInput from "../components/SearchInput";
+import { useClickContext } from "../context/ClickContext";
+import { useUser } from "../context/UserContext";
 
-const HomeScreen = ({ navigation }) => {
-  const { theme } = useTheme(); // Assuming you are using a theme for colors
+const HomeScreen = ({ route }) => {
+  const { username } = useUser();
+  const { theme } = useTheme();
+  const { clickCount } = useClickContext();
+  const [courses, setCourses] = useState([]);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/courses/");
+        const data = await response.json();
+        setCourses(data);
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      }
+    };
+
+    fetchCourses();
+  }, []);
 
   return (
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
-      {/* Main content section */}
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.header}>
-          <Text
-            style={[
-              styles.title,
-              typography.title,
-              { color: theme.colors.textPrimary },
-            ]}
-          >
-            Welcome to the Home Screen!
-          </Text>
-        </View>
-
-        {/* Example of other content */}
-        <View style={styles.content}>
-          <Text style={[styles.text, { color: theme.colors.textSecondary }]}>
-            This is the home screen where you can add your content.
-          </Text>
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: theme.colors.primary }]}
-            onPress={() => navigation.navigate("Explore")}
-          >
-            <Text style={styles.buttonText}>Go to Explore Screen</Text>
-          </TouchableOpacity>
-        </View>
+      <ScrollView>
+        <Text
+          style={[
+            styles.title,
+            typography.title,
+            { color: theme.colors.textPrimary },
+          ]}
+        >
+          Welcome Back
+        </Text>
+        <Text
+          style={[
+            styles.subtitle,
+            typography.subtitle,
+            { color: theme.colors.textSecondary },
+          ]}
+        >
+          {username} !
+        </Text>
+        <SearchInput />
+        <Text
+          style={[
+            styles.sectionTitle,
+            typography.subtitle,
+            { color: theme.colors.textPrimary },
+          ]}
+        >
+          Available Courses
+        </Text>
+        {courses.map((course) => (
+          <InstitutionCard
+            key={course._id}
+            name={course.name}
+            institute={course.institute}
+            rating={course.rating}
+            description={course.shortDescription}
+            image={course.imageUrl}
+          />
+        ))}
       </ScrollView>
-
-      {/* Bottom Navigation Bar */}
-      <BottomNavBar />
+      <TouchableOpacity
+        style={[
+          styles.floatingButton,
+          { backgroundColor: theme.colors.primary },
+        ]}
+      >
+        <Text style={{ color: "white", fontWeight: "bold" }}>{clickCount}</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -54,40 +92,32 @@ const HomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "space-between",
+    padding: 20,
   },
-  scrollContainer: {
-    flexGrow: 1,
-    justifyContent: "center",
-    paddingBottom: 80, // Space for the bottom nav bar
-  },
-  header: {
-    marginTop: 50,
-    marginBottom: 20,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  headerText: {
-    fontSize: 24,
+  title: {
+    fontSize: 18,
     fontWeight: "bold",
+    marginBottom: 5,
   },
-  content: {
-    paddingHorizontal: 20,
-    marginBottom: 40, // Extra space for the bottom nav bar
+  subtitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 12,
   },
-  text: {
-    fontSize: 16,
-    marginBottom: 20,
+  sectionTitle: {
+    fontWeight: "bold",
+    marginVertical: 10,
   },
-  button: {
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 5,
+  floatingButton: {
+    position: "absolute",
+    bottom: 70,
+    right: 20,
+    width: 40,
+    height: 40,
+    borderRadius: 30,
+    justifyContent: "center",
     alignItems: "center",
-  },
-  buttonText: {
-    fontSize: 16,
-    color: "white",
+    elevation: 5,
   },
 });
 

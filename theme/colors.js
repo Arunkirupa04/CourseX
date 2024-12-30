@@ -10,6 +10,7 @@ export const lightColors = {
   inputBackground: "#ffff",
   placeholder: "#828A89",
   oncard: "#ffff",
+  error: "#FF5A5F",
 };
 
 export const darkColors = {
@@ -24,4 +25,5 @@ export const darkColors = {
   inputBackground: "#1B201E",
   placeholder: "#828A89",
   oncard: "#1B201E",
+  error: "#FF5A5F",
 };

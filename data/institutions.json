@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "name": "Victory College",
+    "rating": 4.5,
+    "reviews": 413,
+    "field": "Bio Science",
+    "description": "Studying how CBD awareness and availability is related to pain management alternatives.",
+    "image": "https://open.uom.lk/lms/pluginfile.php/776/block_purity_slideshow/slides/1/2.png"
+  },
+  {
+    "id": 2,
+    "name": "New Montana",
+    "rating": 4.1,
+    "reviews": 354,
+    "field": "Bio Science",
+    "description": "Montana Higher Educational Institute. Gampaha.",
+    "image": "https://open.uom.lk/lms/pluginfile.php/776/block_purity_slideshow/slides/1/2.png"
+  },
+  {
+    "id": 3,
+    "name": "Susipwan Institute",
+    "rating": 3.0,
+    "reviews": 745,
+    "field": "Bio Science",
+    "description": "This is a private higher education center conducting classes for GCE AL Students.",
+    "image": "https://open.uom.lk/lms/pluginfile.php/776/block_purity_slideshow/slides/1/2.png"
+  }
+]
